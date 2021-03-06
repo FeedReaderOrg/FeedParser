@@ -59,15 +59,23 @@ namespace FeedParser
 
         public static FeedParser Create(string content)
         {
-            var xml = new XmlDocument();
-            xml.LoadXml(content);
-            if (xml.DocumentElement?.Name == "feed")
+            content = content.Trim();
+            if (content.Length > 0 && content[0] == '{')
             {
-                return new AtomFeedParser(xml);
+                return new JsonFeedParser(content);
             }
             else
             {
-                return new RssFeedParser(xml);
+                var xml = new XmlDocument();
+                xml.LoadXml(content);
+                if (xml.DocumentElement?.Name == "feed")
+                {
+                    return new AtomFeedParser(xml);
+                }
+                else
+                {
+                    return new RssFeedParser(xml);
+                }
             }
         }
     }
